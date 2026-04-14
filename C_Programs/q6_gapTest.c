@@ -1,36 +1,38 @@
-// c program to implement gap test
 #include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
 
-int main()
-{
-    int n, i, count = 0;
-    double gap, mean_gap = 0.0;
+int main() {
+    int n, i, key;
+    int arr[100];
 
-    printf("Enter the number of random numbers: ");
+    printf("Enter number of elements in sequence: ");
     scanf("%d", &n);
 
-    double random_numbers[100];
-    printf("Enter the random numbers:\n");
-    for (i = 0; i < n; i++)
-    {
-        scanf("%lf", &random_numbers[i]);
+    printf("Enter the sequence (0-9 numbers):\n");
+    for (i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
     }
 
-    printf("Enter the gap value: ");
-    scanf("%lf", &gap);
+    printf("Enter the digit to test (0-9): ");
+    scanf("%d", &key);
 
-    for (i = 1; i < n; i++)
-    {
-        if (fabs(random_numbers[i] - random_numbers[i - 1]) < gap)
-        {
-            count++;
+    int last_index = -1;
+    int gap_count = 0;
+
+    printf("\nGaps between occurrences of %d:\n", key);
+
+    for (i = 0; i < n; i++) {
+        if (arr[i] == key) {
+            if (last_index != -1) {
+                printf("Gap %d: %d\n", gap_count + 1, i - last_index - 1);
+                gap_count++;
+            }
+            last_index = i;
         }
     }
 
-    mean_gap = (double)count / (n - 1);
-    printf("Mean Gap: %.2lf\n", mean_gap);
+    if (gap_count == 0) {
+        printf("Not enough occurrences of %d to compute gaps.\n", key);
+    }
 
     return 0;
 }
