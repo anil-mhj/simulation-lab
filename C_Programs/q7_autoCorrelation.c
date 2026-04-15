@@ -1,36 +1,50 @@
 // c program to implement auto-correlation test
 #include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+
+#define MAX 100
 
 int main()
 {
-    int n, i, j;
-    double sum = 0.0, mean = 0.0, auto_corr = 0.0;
+    int n, i, k;
+    double data[MAX], mean = 0.0;
+    double numerator = 0.0, denominator = 0.0;
 
-    printf("Enter the number of random numbers: ");
+    printf("Enter number of data points: ");
     scanf("%d", &n);
 
-    double random_numbers[100];
-    printf("Enter the random numbers:\n");
+    printf("Enter the data values:\n");
     for (i = 0; i < n; i++)
     {
-        scanf("%lf", &random_numbers[i]);
-        mean += random_numbers[i];
+        scanf("%lf", &data[i]);
+        mean += data[i];
     }
 
     mean /= n;
 
-    for (i = 0; i < n; i++)
+    printf("Enter lag (k): ");
+    scanf("%d", &k);
+
+    if (k >= n || k < 0)
     {
-        for (j = 0; j < n; j++)
-        {
-            sum += (random_numbers[i] - mean) * (random_numbers[j] - mean);
-        }
+        printf("Invalid lag.\n");
+        return 1;
     }
 
-    auto_corr = sum / (n * n);
-    printf("Auto-correlation: %.2lf\n", auto_corr);
+    // numerator
+    for (i = 0; i < n - k; i++)
+    {
+        numerator += (data[i] - mean) * (data[i + k] - mean);
+    }
+
+    // denominator
+    for (i = 0; i < n; i++)
+    {
+        denominator += (data[i] - mean) * (data[i] - mean);
+    }
+
+    double autocorr = numerator / denominator;
+
+    printf("Autocorrelation at lag %d = %lf\n", k, autocorr);
 
     return 0;
 }
