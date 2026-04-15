@@ -1,10 +1,13 @@
+#define _USE_MATH_DEFINES
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 
 int main() {
-    int n, i, inside = 0;
-    double x, y, pi, radius, circumference;
+    int n, i, count = 0;
+    double x, y, r, radius, thickness;
+    double circumference;
 
     printf("Enter number of random points: ");
     scanf("%d", &n);
@@ -12,26 +15,36 @@ int main() {
     printf("Enter radius of circle: ");
     scanf("%lf", &radius);
 
-    srand(time(0));
+    printf("Enter thickness (small value like 0.01): ");
+    scanf("%lf", &thickness);
 
-    for(i = 0; i < n; i++) {
-        // Generate random point between -1 and 1
-        x = (double)rand()/RAND_MAX * 2 - 1;
-        y = (double)rand()/RAND_MAX * 2 - 1;
-
-        // Check if inside unit circle
-        if(x*x + y*y <= 1)
-            inside++;
+    if (n <= 0 || radius <= 0 || thickness <= 0) {
+        printf("Invalid input.\n");
+        return 1;
     }
 
-    // Estimate pi
-    pi = 4.0 * inside / n;
+    srand((unsigned int)time(NULL));
 
-    // Calculate circumference
-    circumference = 2 * pi * radius;
+    for (i = 0; i < n; i++) {
+        // Generate random point in square [-r, r]
+        x = ((double)rand() / RAND_MAX) * 2 * radius - radius;
+        y = ((double)rand() / RAND_MAX) * 2 * radius - radius;
 
-    printf("\nEstimated Pi = %lf\n", pi);
-    printf("Estimated Circumference = %lf\n", circumference);
+        r = sqrt(x*x + y*y);
+
+        // Check if point lies in thin ring near boundary
+        if (r >= radius - thickness && r <= radius)
+            count++;
+    }
+
+    // Area of square = (2r)^2 = 4r^2
+    double square_area = 4 * radius * radius;
+
+    // Estimate circumference
+    circumference = (double)count / n * square_area / thickness;
+
+    printf("\nEstimated Circumference = %lf\n", circumference);
+    printf("Actual Circumference    = %lf\n", 2 * M_PI * radius);
 
     return 0;
 }
